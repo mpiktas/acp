@@ -43,11 +43,9 @@ est
 n<-nrow(y)
 lambda <- matrix(NA,n,1)
 lambda[1] <- theta[1]+theta[2]*mean(y)+theta[3]*mean(y)
-for (t in 2:n) {
-lambda[t] <- theta[1]+theta[2]*y[t-1]+theta[3]*lambda[t-1]
-}
+lambda[2:n] <- filter(theta[1] + theta[2] * y[1:(n-1)], filter = theta[3], init=lambda[1], method = "recursive")
 mu<-lambda
-logl<-(y*log(mu))-mu-log(factorial(y))
+logl<-(y*log(mu))-mu-lfactorial(y)
 sum(-logl)
 }
 
@@ -57,11 +55,9 @@ k<-ncol(x)
 beta<-theta[1:k]
 lambda <- matrix(NA,n,1)
 lambda[1] <- theta[k+1]+theta[k+2]*mean(y)+theta[k+3]*mean(y)
-for (t in 2:n) {
-lambda[t] <- theta[k+1]+theta[k+2]*y[t-1]+theta[k+3]*lambda[t-1]
-}
+lambda[2:n] <- filter(theta[k + 1] + theta[k + 2] * y[1:(n-1)], filter = theta[k + 3], init=lambda[1], method = "recursive")
 mu<-exp(x%*%beta)*lambda
-logl<-(y*log(mu))-mu-log(factorial(y))
+logl<-(y*log(mu))-mu-lfactorial(y)
 sum(-logl)
 }
 
